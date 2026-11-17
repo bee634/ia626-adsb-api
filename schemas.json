@@ -1,0 +1,74 @@
+{
+    "getData": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "title": "getData response",
+        "type": "object",
+        "required": ["code", "msg", "req", "sqltime"],
+        "properties": {
+            "code": {"type": "integer", "enum": [0, 1], "description": "1 = success, 0 = failed"},
+            "msg": {"type": "string", "description": "'ok' or the reason the request failed"},
+            "req": {"type": "string", "const": "getData"},
+            "sqltime": {"type": "number", "description": "seconds the SQL query took (time.time())"},
+            "start": {"type": "string", "format": "YYYY-MM-DD HH:MM:SS"},
+            "end": {"type": "string", "format": "YYYY-MM-DD HH:MM:SS"},
+            "num_results": {"type": "integer", "maximum": 500},
+            "results": {
+                "type": "array",
+                "maxItems": 500,
+                "items": {
+                    "type": "object",
+                    "description": "one row of class_datapoints; geo_point is returned as WKT text",
+                    "properties": {
+                        "date_time": {"type": "string"},
+                        "flight_num": {"type": ["string", "null"]},
+                        "gs": {"type": ["number", "null"]},
+                        "geo_point_wkt": {"type": "string", "example": "POINT(-74.1 41.5)"}
+                    },
+                    "additionalProperties": true
+                }
+            }
+        }
+    },
+    "countInPolygon": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "title": "countInPolygon response",
+        "type": "object",
+        "required": ["code", "msg", "req", "sqltime"],
+        "properties": {
+            "code": {"type": "integer", "enum": [0, 1]},
+            "msg": {"type": "string"},
+            "req": {"type": "string", "const": "countInPolygon"},
+            "sqltime": {"type": "number"},
+            "polygon": {"type": "string", "description": "polygon used, as WKT", "example": "POLYGON((-74 42,-75 39,-74 41,-74 42))"},
+            "count": {"type": "integer", "minimum": 0}
+        }
+    },
+    "getAvgSpeedByFlight": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "title": "getAvgSpeedByFlight response",
+        "type": "object",
+        "required": ["code", "msg", "req", "sqltime"],
+        "properties": {
+            "code": {"type": "integer", "enum": [0, 1]},
+            "msg": {"type": "string"},
+            "req": {"type": "string", "const": "getAvgSpeedByFlight"},
+            "sqltime": {"type": "number"},
+            "start": {"type": ["string", "null"]},
+            "end": {"type": ["string", "null"]},
+            "num_results": {"type": "integer", "maximum": 500},
+            "results": {
+                "type": "array",
+                "maxItems": 500,
+                "items": {
+                    "type": "object",
+                    "required": ["flight_num", "avg_speed"],
+                    "properties": {
+                        "flight_num": {"type": ["string", "null"]},
+                        "avg_speed": {"type": ["number", "null"], "description": "AVG(gs) in knots, 2 dp"},
+                        "num_points": {"type": "integer"}
+                    }
+                }
+            }
+        }
+    }
+}
